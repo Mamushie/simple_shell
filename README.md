@@ -1,9 +1,9 @@
 # Simple_Shell
 
-### Description
-The simple shell is a program that takes commands from the keyboard and gives them to the operating system to execute. It incorporates many features and generally executes other commands. It prompts before each command, inspects arguments, execute them and handles possible errors. The simple shell reads input in terms of lines from a file and breaks it up into words at whitespaces.
+## Description
+This simple shell is a program that takes commands from the keyboard and gives them to the operating system to execute. It incorporates many features and generally executes other commands. It prompts before each command, inspects arguments, execute them and handles possible errors. The simple shell reads input in terms of lines from a file and breaks it up into words at whitespaces.
 
-### Files
+## Files
 File Name  | Description
 ---------- | -----------
 `Authors File` | Contains the name and contact of authors
@@ -12,10 +12,10 @@ File Name  | Description
 `betty_checks.c` | A simple code that passes Betty checks
 `generate-authors.sh` | File with code that generates the authors file.
 
-### Requirements
+## Requirements
 All files to be compiled on Ubuntu 20.04 LTS using gcc, using the options -Wall -Werror -Wextra -pedantic -s
 
 
-#### Authors
-a. @mwanjiku56 
-b. @Wa_Mushie
+### Authors
+- @mwanjiku56 
+- @Wa_Mushie
