@@ -1,96 +1,48 @@
-#include <simple.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include <string.h>
+#include "simple.h"
 
 /**
- * main - Entry point
- * read_s2 - strint to accept command typed in
- * type_prompt - displays a prompt
- * 
- * @par - parameters
- * @s2 - the command
- * @s1 - the path
- * return - Always return 0
+ * shell - main prototype
+ * @args: arguments
  *
+ * Return - nothing
  */
 
-void read_s2(char s1[], char *par[])
- {
-         char line[2048];
-         int count = 0, a = 0, b = 0;
-         char *array[100], *pch;
- 
-         /**read one line*/
-         for (;;)
-         {
-                 int x = fgetc(stdin);
-
-                line[count++] = (char) x;
-                if (x == '\n')
-                        break;
-        }
-
-        if (count == 1)
-
-                 return;
-
-        pch = strtok(line, "\n");
-
-/**parse the line into words*/
-        while (pch != NULL)
-        {
-                 array[a++] = strdup(pch);
-                pch = strtok(NULL, "\n");
-
-        }
-        /**first word is the command*/
-        strcpy(s1, array[0]);
- 
-         /** others are parameters */
-        for (;; b++)                par[b] = array[b];
-        par[a] = "\0"; /**NULL terminates parameters list */
-
- }
- 
- void type_prompt(void)
- {
-         static int first_time = 1;
- 
-         if (first_time)
-         {               /**clear screen for the first time*/
-                 const char *CLEAR_SCREEN = "\033[1;1H \033[2J";
-
-                write(STDOUT_FILENO, CLEAR_SCREEN, 12);
-                first_time = 0;
-        }
-        write(1, "#cisfun$ ", 9); /**display prompt*/
-}
-
- int main(void)
+void shell(int ac, char **av, char **env)
 {
-        char s1[100], s2[100], *parameters[20];
+	char *line;
+	char **args;
+	int status = 1;
+	char *tmp = NULL;
+	char *er;
+	char *filename;
+	int flow;
 
-        /** environment variable */
-        char *envp[] = {(char *) "PATH=/bin", 0};
-
-        while (1)
-        {                                       /**repeat forever*/
-                type_prompt();                  /**display the prompt on screen*/
-                read_s2(s2, parameters); /**read input from the terminal*/
-                if (fork() != 0)                /**parent*/
-                        wait(NULL);                     /**wait for child*/
-                 else
-                 {
-                        strcpy(s1, "/bin/");
-                        strcat(s1, s2);
-                         execve(s1, parameters, envp); /**execute the command*/
-                }
-                 if (strcmp(s2, "exit") == 0)
-                        break;
-        }
-
-        return (0);
+	er = "Error";
+	do {
+		prompt();
+		line = _getline();
+		args = split_line(line);
+		flow = bridge(args[0], args);
+		if (flow == 2)
+		{
+			filename = args[0];
+			args[0] = find_path(args[0], tmp, er);
+			if (args[0] == er)
+			{
+				args[0] = search_cwd(filename, er);
+				if (args[0] == filename)
+					write(1, er, 5);
+			}
+		}
+		if (args[0] != er)
+			status = execute_prog(args, line, env, flow);
+		free(line);
+		free(args);
+	} while (status);
+	if (!ac)
+		(void)ac;
+	if (!av)
+		(void)av;
+	if (!env)
+		(void)env;
 }
